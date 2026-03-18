@@ -16,6 +16,7 @@ public class FileExplorerController
 	public FileExplorerController() {
 		this.model = new FileExplorerModel();
 		this.view = new FileExplorerGUI();
+		this.model.addPropertyChangeListener(this.view);
 		
 		view.getAboutMenuItem().addActionListener(e -> {
 			view.showAboutDialog(model);
