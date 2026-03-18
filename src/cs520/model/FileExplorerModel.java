@@ -1,20 +1,25 @@
 package cs520.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
-public class FileExplorerModel 
+
+public class FileExplorerModel
 {
 	public static final String DESKTOP_FOLDER_NAME = "Desktop";
 	public static final String DOCUMENTS_FOLDER_NAME = "Documents";
 	public static final String DOWNLOADS_FOLDER_NAME = "Downloads";
-	
+	public static final String CURRENT_FOLDER_PROPERTY = "currentOpenFolder";
+
 	private String osName;
 	private String osVersion;
 	private String homeFolderName;
 	private String desktopFolderName;
 	private String documentsFolderName;
-	private String downloadsFolderName;	
+	private String downloadsFolderName;
 	private FileModel currentOpenFolder;
-	
+	private PropertyChangeSupport propertyChangeSupport;
+
 	public FileExplorerModel() {
 		this.osName = System.getProperty("os.name");
 		this.osVersion = System.getProperty("os.version");
@@ -23,6 +28,15 @@ public class FileExplorerModel
 		this.documentsFolderName = this.homeFolderName + System.getProperty("file.separator") + DOCUMENTS_FOLDER_NAME;
 		this.downloadsFolderName = this.homeFolderName + System.getProperty("file.separator") + DOWNLOADS_FOLDER_NAME;
 		this.currentOpenFolder = null;
+		this.propertyChangeSupport = new PropertyChangeSupport(this);
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		this.propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 	
 	public String getOSName() {
@@ -58,6 +72,8 @@ public class FileExplorerModel
 		if ((currentOpenFolder != null) && (! currentOpenFolder.isDirectory())) {
 			throw new UnsupportedOperationException("Cannot go to file " + currentOpenFolder.getName());
 		}
+		FileModel oldFolder = this.currentOpenFolder;
 		this.currentOpenFolder = currentOpenFolder;
+		this.propertyChangeSupport.firePropertyChange(CURRENT_FOLDER_PROPERTY, oldFolder, currentOpenFolder);
 	}
 }
