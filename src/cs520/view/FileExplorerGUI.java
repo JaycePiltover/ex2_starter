@@ -1,6 +1,8 @@
 package cs520.view;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -12,7 +14,7 @@ import javax.swing.JOptionPane;
 import cs520.model.FileExplorerModel;
 
 
-public class FileExplorerGUI extends JFrame 
+public class FileExplorerGUI extends JFrame implements PropertyChangeListener
 {
 	public static final String APP_TITLE = "File Explorer";
 	public static final String ABOUT_TITLE = "About";
@@ -151,6 +153,13 @@ public class FileExplorerGUI extends JFrame
 		return this.centerPanel;
 	}
 	
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getSource() instanceof FileExplorerModel) {
+			this.update((FileExplorerModel) event.getSource());
+		}
+	}
+
 	public void update(FileExplorerModel model) {
 		// Update the "Go Enclosing Folder" menu item
 		if ((model != null) && (this.goEnclosingFolderMenuItem != null)) {
